@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Planner & Scheduler</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i> AcademicFocus
+        </div>
+        <nav class="nav">
+            <a href="#" class="nav-link active" data-target="schedule-generator">Scheduler</a>
+            <a href="#" class="nav-link" data-target="planner">Planner View</a>
+            <a href="#" class="nav-link" data-target="stats">Stats</a>
+            </nav>
+    </header>
+
+    <main class="container">
+        
+        <div class="content-area">
+
+            <section id="schedule-generator" class="content-view active-view">
+                <h2><i class="fas fa-calendar-plus"></i> Goal-to-Schedule Generator</h2>
+                <p>Convert your short-term academic goal into a concrete 1-2 week study plan.</p>
+                
+                <form id="scheduler-form">
+                    <div class="form-group">
+                        <label for="goal-date">Goal Deadline (End Date):</label>
+                        <input type="date" id="goal-date" required>
+                    </div>
+
+                    <h3>Topics/Tasks (with estimated Difficulty)</h3>
+                    <div id="topics-list">
+                        </div>
+                    <button type="button" class="btn btn-secondary" onclick="addTopicInput()">
+                        <i class="fas fa-plus-circle"></i> Add Topic
+                    </button>
+                    <p class="hint">Difficulty (1=Easy, 3=Hard) helps balance your workload. Estimate 1-3 hours per difficulty point.</p>
+
+                    <h3>Available Study Slots (Weekly Template)</h3>
+                    <div id="slots-list">
+                        </div>
+                    <button type="button" class="btn btn-secondary" onclick="addSlotInput()">
+                        <i class="fas fa-plus-circle"></i> Add Slot
+                    </button>
+                    <p class="hint">Use your typical weekly availability.</p>
+                    
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <i class="fas fa-magic"></i> Generate Schedule
+                    </button>
+                </form>
+
+                <div id="schedule-output" class="result-box hidden">
+                    <h3>Generated Study Plan</h3>
+                    <div id="schedule-result-table">
+                        </div>
+                    <p class="hint mt-10">Review this plan and click 'Add' to incorporate specific sessions into your main planner.</p>
+                </div>
+            </section>
+            
+            <section id="planner" class="content-view">
+                <h2><i class="fas fa-clipboard-list"></i> Daily Study Planner</h2>
+                
+                <div class="planner-controls">
+                    <input type="date" id="current-view-date"> 
+                    <div class="view-toggle">
+                        <button class="btn btn-toggle active" data-view="day"><i class="fas fa-calendar-day"></i> Day</button>
+                        <button class="btn btn-toggle" data-view="week"><i class="fas fa-calendar-week"></i> Week</button>
+                        <button class="btn btn-toggle" data-view="month"><i class="fas fa-calendar-alt"></i> Month</button>
+                    </div>
+                </div>
+
+                <div id="planner-view" class="planner-view">
+                    </div>
+
+                <button class="btn btn-add" onclick="openSessionModal()">
+                    <i class="fas fa-plus"></i> Add New Session
+                </button>
+            </section>
+
+            <section id="stats" class="content-view">
+                <h2><i class="fas fa-chart-line"></i> Progress & Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="total-hours">0h 0m</span>
+                        <span class="stat-label">Total Hours Studied (Completed)</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="streak">0 days</span>
+                        <span class="stat-label">Current Study Streak</span>
+                    </div>
+                </div>
+                
+                <h3>Subject Distribution</h3>
+                <div id="subject-chart" class="chart-placeholder">
+                    <p>No completed sessions yet to calculate statistics.</p>
+                </div>
+            </section>
+
+        </div> </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 AcademicFocus Planner. Designed for University Students.</p>
+    </footer>
+
+    <div id="session-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeSessionModal()">&times;</span>
+            <h3><i class="fas fa-book"></i> Schedule Study Session</h3>
+            <form id="session-form">
+                <input type="hidden" id="session-id">
+                
+                <div class="form-group">
+                    <label for="session-subject">Subject</label>
+                    <input type="text" id="session-subject" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="session-date">Date</label>
+                    <input type="date" id="session-date" required>
+                </div>
+
+                <div class="form-group time-group">
+                    <div>
+                        <label for="session-start">Start Time</label>
+                        <input type="time" id="session-start" required>
+                    </div>
+                    <div>
+                        <label for="session-end">End Time</label>
+                        <input type="time" id="session-end" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="session-priority">Priority</label>
+                    <select id="session-priority">
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                        <option value="Crucial">Crucial</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Save Session</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="timer-modal" class="modal">
+        <div class="modal-content timer-content">
+            <span class="close-button" onclick="closeTimerModal()">&times;</span>
+            <h3><i class="fas fa-clock"></i> Pomodoro Timer</h3>
+            <div id="timer-display" class="timer-display">25:00</div>
+            <p id="timer-status">Ready to study!</p>
+            <div class="timer-controls">
+                <button class="btn btn-timer" id="start-timer"><i class="fas fa-play"></i> Start</button>
+                <button class="btn btn-timer" id="pause-timer" disabled><i class="fas fa-pause"></i> Pause</button>
+                <button class="btn btn-timer" id="reset-timer"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
